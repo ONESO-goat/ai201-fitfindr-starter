@@ -12,6 +12,12 @@ from typing import Optional
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 
+def load_favorites():
+    """Loading the user's favoirtes"""
+    path = os.path.join(_DATA_DIR, "favorites.json")
+    with open(path, 'r') as file:
+        return json.load(file)
+
 def load_listings() -> list[dict]:
     """
     Load all mock listings from the dataset.
@@ -50,13 +56,17 @@ def load_wardrobe_schema() -> dict:
         return json.load(f)
 
 
-def get_example_wardrobe() -> dict:
+def get_example_wardrobe(x:str='wardrobe') -> dict:
     """
     Convenience function — returns just the example wardrobe items list.
 
     Returns:
         A wardrobe dict with an 'items' key containing a list of wardrobe items.
     """
+    if x in ['favorite', 'saved']:
+        f = load_favorites() 
+        return f['outfit_example']
+    
     schema = load_wardrobe_schema()
     return schema["example_wardrobe"]
 

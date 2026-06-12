@@ -1,0 +1,26 @@
+{
+    "outfit_example": {
+            "id": 0,
+            "_note": "just listing clothing inside my real wardrobe",
+            "hoodie": "",
+            "jacket": "leather jacket",
+            "shirt": "black compress shirts",
+            "pants": "black jeans",
+            "shoes": "jordan 4 black cats",
+            "accessory": "silver watch",
+            "added_at": "the date it was added"
+            
+    },
+
+    "outfits": [],
+
+
+    "clothing": {
+        "hoddies": [],
+        "jackets": [],
+        "shirts": [],
+        "pants": [],
+        "shoes": [],
+        "accossries": []
+    }
+}
