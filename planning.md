@@ -63,16 +63,32 @@ An outfit recommendation containing:
 If the wardrobe is empty or no compatible outfit can be generated, return styling suggestions that use only the new item and provide general recommendations.
 <!-- What should the agent do if the wardrobe is empty or no outfit can be suggested? -->
 
+returned data from suggest_outfit:
+
+   
+     • It seems like your wardrobe is empty, but that's totally okay. 
+     We can fresh and build a brand new wardrobe that fits your personal style.
+
+     To get started, can you tell me a bit about your fashion taste? Do you have a preference for classic and timeless pieces or do you like to stay on top of the latest trends? Are there any specific colors, patterns, or styles that you particularly enjoy wearing?
+
+     Also, what's your lifestyle like? Are you more of a casual, laid-back person or do you have a job that requires you to dress up frequently? This will help me get a better idea of what types of clothing would be a good fit for you.
+
+     Lastly, what's your budget like? Are you looking to invest in a few high-quality, timeless pieces or do you want to build a wardrobe on a more affordable budget?
+
+     Let's chat, and I'll start making some recommendations based on your input. 
+
+     Since you just got the "Silk Button-Down — Sage Green", I can give you some general styling advice on how to wear it. This top is perfect for a flowy, effortless look. You can pair it with some distressed denim jeans and sneakers for a casual, everyday look, or dress it up with a flowy skirt and some heeled sandals for a more elegant look. The sage green color is also really versatile, so you can easily pair it with neutrals like beige, black, or white, or add some contrast with brighter colors like yellow or orange. 
+
+     Let me know if you have any other questions or if there's anything else I can help you with!
 ---
 
 ### Tool 3: create_fit_card
 
 **What it does:**
 Creates a final presentation card that summarizes the recommended outfi.
-<!-- Describe what this tool does in 1–2 sentences -->
 
 **Input parameters:**
-<!-- List each parameter, its type, and what it represents -->
+
 - `outfit` (...): Complete outfit recommendation generated from the function 'suggest_outfit'.
 
 **What it returns:**

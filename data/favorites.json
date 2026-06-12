@@ -1,26 +1,63 @@
 {
     "outfit_example": {
-            "id": 0,
-            "_note": "just listing clothing inside my real wardrobe",
-            "hoodie": "",
-            "jacket": "leather jacket",
-            "shirt": "black compress shirts",
-            "pants": "black jeans",
-            "shoes": "jordan 4 black cats",
-            "accessory": "silver watch",
-            "added_at": "the date it was added"
-            
+        "id": 0,
+        "_note": "just listing clothing inside my real wardrobe",
+        "hoodie": "",
+        "jacket": "leather jacket",
+        "shirt": "black compress shirts",
+        "pants": "black jeans",
+        "shoes": "jordan 4 black cats",
+        "accessory": "silver watch",
+        "added_at": "the date it was added"
     },
-
-    "outfits": [],
-
-
-    "clothing": {
-        "hoddies": [],
-        "jackets": [],
-        "shirts": [],
-        "pants": [],
-        "shoes": [],
-        "accossries": []
-    }
+    "outfits": [
+        {
+            "id": "lst_040",
+            "title": "Tie-Dye Long Sleeve \u2014 Pastel",
+            "description": "Since your wardrobe is empty, I'd love to provide some general styling advice for the new item you've acquired, the Tie-Dye Long Sleeve \u2014 Pastel. \n\nThis piece is perfect for creating a unique and eye-catching outfit. The soft pastel hues of pink, lavender, and mint will add a touch of whimsy to any look. Here are a few tips to get you started:\n\n* Pair the Tie-Dye Long Sleeve with some neutral-colored bottoms, like jeans or a flowy skirt, to let the top be the focal point of the outfit.\n* Add some distressed denim or a flowy maxi skirt to give the look a more bohemian vibe, fitting for the cottagecore style tag.\n* Consider layering a denim jacket or a cardigan over the top to add some texture and depth to the outfit.\n* For a more streetwear-inspired look, pair the Tie-Dye Long Sleeve with some bold, brightly colored sneakers and distressed denim.\n\nIf you're interested in adding some new pieces to your wardrobe to complement the Tie-Dye Long Sleeve, I can suggest some items from our available clothing. For example, the Vintage Levi's 501 Jeans \u2014 Medium Wash would be a great pairing with the Tie-Dye Long Sleeve. The classic, vintage look of the jeans would provide a nice contrast to the more playful, tie-dye top.\n\nCan you tell me a bit more about your personal style and what you're looking for in terms of clothing? Do you have any favorite brands, colors, or styles that you gravitate towards? This will help me provide more tailored recommendations for you.",
+            "category": "tops",
+            "style_tags": [
+                "tie-dye",
+                "cottagecore",
+                "colorful",
+                "streetwear"
+            ],
+            "size": "L/XL",
+            "condition": "excellent",
+            "price": 17.0,
+            "colors": [
+                "pink",
+                "lavender",
+                "mint"
+            ],
+            "brand": null,
+            "platform": "depop",
+            "caption": "\"Just scored the cutest Tie-Dye Long Sleeve \u2014 Pastel top and I'm obsessing over the soft pastel hues, it's giving me all the whimsical vibes. I paired it with some neutral bottoms to let the top be the star of the show, and I'm feeling like a total bohemian babe. You can find similar tops on depop, and I got inspired by the Vintage Levi's 501 Jeans \u2014 Medium Wash, which is available for $38.0 - now I'm all about mixing and matching to create the perfect cottagecore look\""
+        }
+    ],
+    "clothing": [
+        {
+            "id": "lst_040",
+            "title": "Tie-Dye Long Sleeve \u2014 Pastel",
+            "description": "Since your wardrobe is empty, I'd love to provide some general styling advice for the new item you've acquired, the Tie-Dye Long Sleeve \u2014 Pastel.\n\nThis piece is perfect for creating a unique and eye-catching outfit. The soft pastel hues of pink, lavender, and mint will add a touch of whimsy to any look. Here are a few tips to get you started:\n\n* Pair the Tie-Dye Long Sleeve with some neutral-colored bottoms, like jeans or a flowy skirt, to let the top be the focal point of the outfit.\n* Add some distressed denim or a flowy maxi skirt to give the look a more bohemian vibe, fitting for the cottagecore style tag.\n* Consider layering a denim jacket or a cardigan over the top to add some texture and depth to the outfit.\n* For a more streetwear-inspired look, pair the Tie-Dye Long Sleeve with some bold, brightly colored sneakers and distressed denim.\n\nIf you're interested in adding some new pieces to your wardrobe to complement the Tie-Dye Long Sleeve, I can suggest some items from our available clothing. For example, the Vintage Levi's 501 Jeans \u2014 Medium Wash would be a great pairing with the Tie-Dye Long Sleeve. The classic, vintage look of the jeans would provide a nice contrast to the more playful, tie-dye top.\n\nCan you tell me a bit more about your personal style and what you're looking for in terms of clothing? Do you have any favorite brands, colors, or styles that you gravitate towards? This will help me provide more tailored recommendations for you.",
+            "category": "tops",
+            "style_tags": [
+                "tie-dye",
+                "cottagecore",
+                "colorful",
+                "streetwear"
+            ],
+            "size": "L/XL",
+            "condition": "excellent",
+            "price": 17.0,
+            "colors": [
+                "pink",
+                "lavender",
+                "mint"
+            ],
+            "brand": null,
+            "platform": "depop",
+            "caption": "\"Hey guys, I just got the cutest Tie-Dye Long Sleeve \u2014 Pastel top for $17.0 on depop and I'm totally vibing with the soft pastel hues - it's the perfect addition to my wardrobe. I paired it with some neutral-colored bottoms to let the top shine, giving off major bohemian vibes and I'm feeling like a total cottagecore babe, especially when I layer it with my fave denim jacket. You can recreate this look by mixing and matching with some distressed denim, like the Vintage Levi's 501 Jeans \u2014 Medium Wash, and adding some bold sneakers for a streetwear twist\""
+        }
+    ]
 }

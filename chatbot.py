@@ -27,7 +27,28 @@ class Chatbot:
         self.llm_model = llm_model
 
         
-    def generate_stylist_assistant(self, prompt:str):
+    def generate_stylist_assistant(self, prompt:str='', new_outfit:dict={}):
+        favs = load_favorites()
+        m = f"""
+            \u2022The user's Favorite clothing. If there are any items seen, use that knowledge to pick out clothing that'll please the user:
+                    - OUTFITS: {favs['outfits']}
+                    - CLOTHING: {favs['clothing']}
+
+        """
+        
+        no_question_prompt = f'''
+            
+            No questions were asked from the user, instead provide outfit suggestions from their wardrobe.
+            
+            - If the wardrobe is empty: offer general styling advice for the item bought from the user. 
+            
+            - If not empty: suggest specific outfit combinations using the new item
+            and named pieces from the wardrobe.
+            
+            here is the data on the item: 
+                \u2022 {self.format_dict(new_outfit)}
+            
+            '''
         m = [
                     {
                         "role": "system",
@@ -37,8 +58,8 @@ class Chatbot:
                             """
                             "Use only the provided outfit database to answer questions. "
                             #"Implement a script that loads the documents, cleans them, and produces chunks matching the specified chunk size and overlap. "
-                            """If you couldn't find clothing that matches the person's interest; ask follow up questions asking for more details like size, color, or the exact brand if that wasn't provided. 
-                            You are here to fulfil the person's needs and interest. Be welcoming and spark humor when necessary.
+                            """If you couldn't find clothing that matches the person's interest; provide recommendations from the available clothing and possible outfit combos the user could enjpy.
+                            You can also ask follow up questions asking for more details like size, color, or the exact brand if that wasn't provided. 
                             """
                         ),
                     },
@@ -46,11 +67,10 @@ class Chatbot:
                         "role": "user",
                         "content": f"""
             Question:
-            {prompt}
+            {prompt if prompt else no_question_prompt}
             
             
-            Available clothing inside the shop:
-            {load_listings()}
+        
             
             The user's warbrobe. If the list/wardrobe is empty, ask questions about the user's taste and recommend clothing based on their speaking style:
             {load_wardrobe_schema()['empty_wardrobe']['items']}
@@ -59,16 +79,11 @@ class Chatbot:
             
                 \u2022 The user's Favorite outfits:
                     - {load_favorites()["outfits"]}
+            
+            Available clothing inside the shop:
+                {self.format_dict(load_listings()[0])}
                 
-                \u2022The user's Favorite clothing. If there are any items seen, use that knowledge to pick out clothing that'll please the user:
-                    - favorite shirts: {load_favorites()['clothing']['shirts']}
-                    - favorite pants: {load_favorites()['clothing']['pants']}
-                    - favorite shoes: {load_favorites()['clothing']['shoes']}
-                    - favorite jackets: {load_favorites()['clothing']['jackets']}
-                    - favorite hoodies: {load_favorites()['clothing']['hoodies']}
-                    - favorite accossries: {load_favorites()['clothing']['accossries']}
-
-            """,
+            """
                     },
                 ]
         if self.backend == 'grok':
@@ -121,9 +136,10 @@ class Chatbot:
                 return ""
     
     def format_dict(self, x):
-        txt = ""
+        txt = "=========================================\n"
         for keys, values in x.items():
             txt += f" - The {keys} for the item: {values}\n"
+        txt += "=========================================\n"
         return txt
     
     def generate_scoring(self, description:str, item:dict):

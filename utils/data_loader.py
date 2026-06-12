@@ -12,11 +12,25 @@ from typing import Optional
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 
-def load_favorites():
+def load_favorites(save:bool=False, data:dict={}, where_to_save='clothing'):
     """Loading the user's favoirtes"""
+    
     path = os.path.join(_DATA_DIR, "favorites.json")
     with open(path, 'r') as file:
-        return json.load(file)
+        favs = json.load(file)
+    if save:
+        if where_to_save not in ['clothing', 'outfits']:
+            print(f"'{where_to_save}' is not a valid saving point")
+            return favs
+        if not data:
+            print(f"Cant save an empty dataset")
+            return favs
+        
+        favs[where_to_save].append(data)
+        with open(path, 'w') as file:
+            json.dump(favs,file, indent=4)
+    return favs
+    
 
 def load_listings() -> list[dict]:
     """
@@ -41,7 +55,7 @@ def load_listings() -> list[dict]:
         return json.load(f)
 
 
-def load_wardrobe_schema() -> dict:
+def load_wardrobe_schema(save=False,data:dict={}) -> dict:
     """
     Load the wardrobe schema, including the example wardrobe and empty template.
 
@@ -52,8 +66,17 @@ def load_wardrobe_schema() -> dict:
         - empty_wardrobe: a starting template for a new user
     """
     path = os.path.join(_DATA_DIR, "wardrobe_schema.json")
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    with open(path, 'r') as file:
+        war = json.load(file)
+    if save:
+        if not data:
+            print(f"Cant save an empty dataset")
+            return war
+        
+        war['empty_wardrobe']['items'].append(data)
+        with open(path, 'w') as file:
+            json.dump(war,file, indent=4)
+    return war
 
 
 def get_example_wardrobe(x:str='wardrobe') -> dict:
