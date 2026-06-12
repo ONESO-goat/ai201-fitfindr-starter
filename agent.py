@@ -18,8 +18,9 @@ Usage (once implemented):
     print(result["error"])   # None on success
 """
 
-from tools import search_listings, suggest_outfit, create_fit_card
+from tools import FitFinder
 
+finder = FitFinder()
 
 # ── session state ─────────────────────────────────────────────────────────────
 
@@ -94,6 +95,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     """
     # TODO: implement the planning loop
     session = _new_session(query, wardrobe)
+    
     session["error"] = "Planning loop not yet implemented."
     return session
 
