@@ -127,17 +127,23 @@ Return an error message and allow the user to retry.
 
 ---
 
-## Tool 5: get_saved
+## Tool 5: save_history
+
 **What it does:**
-Gets the saved favorites inside user's favorites.json
+Saves the session history in a .json file.
 
 **Input parameters:**
 
-item (str | None): The agents query for item to see if saved, if not, prompt if the user wants it saved as a favorite. If The item is None, just returns the entire favorite items/combos.
+user: The user's text.
+response: The agents response.
+new_item: The new item provided from search_listings.
+outfit_suggestion: The outfit suggestion for suggest_outfit.
+caption: The caption from create_fit_card.
+
+
 
 **What it returns:**
-Text summary, if the an item was saved, returns "item saved".
-
+confirmation if it saved.
 
 
 <!-- Describe what this tool does in 1–2 sentences -->

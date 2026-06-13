@@ -7,6 +7,7 @@ the files each time.
 import json
 import os
 from typing import Optional
+from datetime import datetime, timezone
 
 # Resolve the path to the data directory relative to this file
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
@@ -104,6 +105,36 @@ def get_empty_wardrobe() -> dict:
     schema = load_wardrobe_schema()
     return schema["empty_wardrobe"]
 
+
+def save_chat_history(user, 
+                      response,
+                      caption, 
+                      outfit_suggestion,
+                      new_item=None, 
+                      saved=False):
+    try:
+        path = os.path.join(_DATA_DIR, "history.json")
+        with open(path, 'r') as file:
+            history = json.load(file)
+        
+        h = {
+            "id": len(history['chathistory']) + 1,
+            "user": user,
+            "response": response,
+            "new_item": new_item,
+            "outfit_suggestion": outfit_suggestion,
+            "caption": caption,
+            "saved": saved,
+            "date": str(datetime.now(tz=timezone.utc)),
+        }
+        history['chat_history'].append(h)
+        with open(path, 'w') as file:
+            json.dump(history, file, indent=4)
+        return True
+    
+    except Exception as ex:
+        print(f"Chat was not saved: {ex}")
+        return False
 
 # --- Quick sanity check ---
 if __name__ == "__main__":

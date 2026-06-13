@@ -1,6 +1,8 @@
 from groq import Groq
 from config import Config
 import ollama 
+import re
+import json
 import gradio as gr
 from utils.data_loader import load_listings, load_favorites, load_wardrobe_schema
 class Chatbot:
@@ -226,109 +228,109 @@ Output Rules:
 
                 return ""
                 
-    def background_helper(self, description:str, item:dict):
+    def background_helper(self, description:str, item:dict={}):
+        
+        if not item:
+            item_txt = '''
+                The user didn't provide an item for you to analyze, 
+                this means youll have to search inside available listings and find clothing that match the description.
+                To do this, set "search_listings" to True inside the returning dictionary
+            '''
+            
+        else:
+            item_txt = self.format_dict(item)
+            
+        BACKGROUND_HELPER_SYSTEM_PROMPT = """You are a fashion query parser. Your ONLY job is to return a single JSON object — no explanation, no markdown, no extra text.
+
+## YOUR TASK
+Parse the user's description and item data, then return a JSON object deciding which functions to call.
+
+
+## FUNCTION REFERENCE
+
+| Function | Purpose | Call when |
+|---|---|---|
+| search_listings | Find items matching description, size, max_price | User wants to find/browse items |
+| suggest_outfit | Build an outfit around a specific item + wardrobe | A specific item is known |
+| create_fit_card | Generate an OOTD Instagram caption | User wants to share/post the look |
+| save_favorite | Save outfit or item to favorites | User expresses they want to keep/save it |
+
+## OUTPUT SCHEMA
+Return EXACTLY this shape. No extra keys. No explanation.
+
+{
+    "description": "<concise item keywords, e.g. 'vintage graphic tee'>",
+    "size": "<size string or null>",
+    "max_price": <number or null>,
+    "search_listings": <true or false>,
+    "suggest_outfit": <true or false>,
+    "create_fit_card": <true or false>,
+    "save_favorite": <false or "clothing" or "outfit">
+}
+
+## RULES
+- save_favorite is "outfit" when the user wants a full look (event, occasion, trip)
+- save_favorite is "clothing" when the user wants a single piece saved
+- save_favorite is false when the user does not mention saving or liking anything
+- suggest_outfit is true whenever the user mentions styling, outfits, or what to wear with it
+- create_fit_card is true only when the user wants to post, share, or show off the look
+- All values must be valid JSON — use null not None, true/false not True/False
+
+## EXAMPLES
+
+Input: "vintage graphic tee under $30 size M, I wear baggy jeans and chunky sneakers"
+Output:
+{
+    "description": "vintage graphic tee",
+    "size": "M",
+    "max_price": 30,
+    "search_listings": true,
+    "suggest_outfit": true,
+    "create_fit_card": false,
+    "save_favorite": false
+}
+
+Input: "going on a summer vacation with family, need a full outfit, want to post it"
+Output:
+{
+    "description": "summer vacation outfit",
+    "size": null,
+    "max_price": null,
+    "search_listings": true,
+    "suggest_outfit": true,
+    "create_fit_card": true,
+    "save_favorite": "outfit"
+}
+
+Input: "found this floral dress on Depop, is it a good deal?"
+Output:
+{
+    "description": "floral dress",
+    "size": null,
+    "max_price": null,
+    "search_listings": false,
+    "suggest_outfit": false,
+    "create_fit_card": false,
+    "save_favorite": false
+}
+"""
         
         m = [
                     {
                         "role": "system",
-                        "content": (
-                            """You are a fashion item searcher.
-
-Task:
-Given a user question and an item listing, return a dictionary breaking down the users chat.
-
-You have access to functions, to use them, set their values to 'True' inside the returned dictionary. 
-
-here is a summary on each of them:
-
-    \u2022 search_listings
-        
-            
-            Search the mock listings dataset for items matching the description,
-            optional size, and optional price ceiling.
-
-            Args:
-                description: Keywords describing what the user is looking for
-                            (e.g., "vintage graphic tee").
-                size:        Size string to filter by, or None to skip size filtering.
-                            Matching is case-insensitive (e.g., "M" matches "S/M").
-                max_price:   Maximum price (inclusive), or None to skip price filtering.
-
-            Returns:
-                A list of matching listing dicts, sorted by relevance (best match first).
-                Returns an empty list if nothing matches — does NOT raise an exception.
-
-            Each listing dict has the following fields:
-                id, title, description, category, style_tags (list), size,
-                condition, price (float), colors (list), brand, platform
-            
-            
-    
-    \u2022 suggest_outfit
-      
-        Args:
-            new_item: A listing dict (the item the user is considering buying).
-            wardrobe: A wardrobe dict with an 'items' key containing a list of
-                    wardrobe item dicts. May be empty — handle this gracefully.
-
-        Returns:
-            A non-empty string with outfit suggestions.
-            If the wardrobe is empty, offer general styling advice for the item
-            rather than raising an exception or returning an empty string.
-
-    
-    \u2022 create_fit_card
-        
-        Generate a short, shareable outfit caption for the thrifted find.
-
-        Args:
-            outfit:   The outfit suggestion string from suggest_outfit().
-            new_item: The listing dict for the thrifted item.
-
-        Returns:
-            A 2–4 sentence string usable as an Instagram/TikTok caption.
-            If outfit is empty or missing, return a descriptive error message
-            string — do NOT raise an exception.
-
-        The caption should:
-        - Feel casual and authentic (like a real OOTD post, not a product description)
-        - Mention the item name, price, and platform naturally (once each)
-        - Capture the outfit vibe in specific terms
-        - Sound different each time for different inputs (use higher LLM temperature)
-
-    \u2022 save_favorite
-    
-        You can ask the user if they liked the outfit, if yes, you call this function to save it.
-        
-        Args:
-            outfit:str: The outfit suggestion string from suggest_outfit().
-            caption:str: The instagram like caption created from create_fit_card().
-            new_item:dict: The new item the user picked out.
-            type_:str='clothing': If this item is an outfit or just a piece of clothing
-            
-Output Rules:
-return :
-
-{   
-
-    "search_listings": True or False,
-    "suggest_outfit": True or False,
-    "create_fit_card": True or False,
-    "save": True or False
-}
-"""
-                        ),
+                        "content": BACKGROUND_HELPER_SYSTEM_PROMPT,
                     },
                     {
                         "role": "user",
                         "content": f"""
-            The description of the item:
-            {description}
-            
-            The item data:
-                \u2022{self.format_dict(item)}
-            """,
-                    },
+                        
+                        The description of the item:
+                        {description}
+                        
+                        The item data:
+                            \u2022{item_txt}
+                        """,
+                    }
                 ]
         if self.backend == 'grok':
             try:
@@ -342,9 +344,9 @@ return :
                 
                 
                 if answer:
-                    return float(answer.strip())
+                    return self.parse_background_helper_response(answer)
                 print("No answer generated.")
-                return ''
+                return {}
             
             except Exception as ex:
                 print(f"There was an error while generating response: \n\t\u2022 {ex}")
@@ -372,17 +374,70 @@ return :
                 print("\nOllama Response and content are created successfully\n")
               
                 #print(f'\n\n\t\u2022CONTENT: {content}')
-                return content
+                return self.parse_background_helper_response(content)
 
             except Exception as e:
                 print(f"⚠ Ollama generation error: {e}")
 
-                return ""
+                return {}
                 
-    
+    def parse_background_helper_response(self, response: str) -> dict:
+        """
+        Parses the LLM's response from background_helper into a valid Python dict.
+        Handles JSON wrapped in markdown code blocks, stray text, and common model quirks.
+        """
+        if not response:
+            raise ValueError("LLM returned an empty or None response.")
+
+        # 1. Strip markdown code fences if present (```json ... ``` or ``` ... ```)
+        cleaned = re.sub(r"```(?:json)?\s*", "", response).replace("```", "").strip()
+
+        # 2. Extract the first {...} block in case the model added commentary
+        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+        if not match:
+            raise ValueError(f"No JSON object found in response: {response!r}")
+        
+        json_str = match.group(0)
+
+        # 3. Fix unquoted None → null, True/False are already valid JSON
+        #    but Python-style None needs to become null
+        json_str = re.sub(r'\bNone\b', 'null', json_str)
+        json_str = re.sub(r'\bTrue\b', 'true', json_str)
+        json_str = re.sub(r'\bFalse\b', 'false', json_str)
+
+        # 4. Parse
+        try:
+            parsed = json.loads(json_str)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Failed to parse JSON: {e}\nRaw string was: {json_str!r}")
+
+        # 5. Validate expected keys exist
+        expected_keys = {
+            "max_price", "size", "description",
+            "search_listings", "suggest_outfit",
+            "create_fit_card", "save_favorite"
+        }
+        missing = expected_keys - parsed.keys()
+        if missing:
+            raise ValueError(f"LLM response missing expected keys: {missing}")
+
+        # 6. Coerce types to be safe
+        parsed["max_price"] = float(parsed["max_price"]) if parsed.get("max_price") else None
+        parsed["size"] = str(parsed["size"]) if parsed.get("size") else None
+        parsed["search_listings"] = bool(parsed.get("search_listings", False))
+        parsed["suggest_outfit"] = bool(parsed.get("suggest_outfit", False))
+        parsed["create_fit_card"] = bool(parsed.get("create_fit_card", False))
+
+        # save_favorite can be False, 'clothing', or 'outfit'
+        sf = parsed.get("save_favorite")
+        if sf not in (False, None, "clothing", "outfit"):
+            parsed["save_favorite"] = False  # safe fallback
+
+        return parsed
     def __str__(self):
         return f"{self.llm_model}"
 
 if __name__ == "__main__":
     bot = Chatbot()
+    print(bot.background_helper("vintage graphic tee under $30 size M, I wear baggy jeans and chunky sneakers"))
     

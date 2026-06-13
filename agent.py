@@ -19,6 +19,8 @@ Usage (once implemented):
 """
 
 from tools import FitFinder
+from utils.data_loader import get_empty_wardrobe, save_chat_history
+    
 
 finder = FitFinder()
 
@@ -36,6 +38,7 @@ def _new_session(query: str, wardrobe: dict) -> dict:
     """
     return {
         "query": query,              # original user query
+        "chat": '',                  # Agents message towards the user
         "parsed": {},                # extracted description / size / max_price
         "search_results": [],        # list of matching listing dicts
         "selected_item": None,       # top result, passed into suggest_outfit
@@ -94,32 +97,124 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     of planning.md — your implementation should match what you described there.
     """
     # TODO: implement the planning loop
-    session = _new_session(query, wardrobe)
     
-    session["error"] = "Planning loop not yet implemented."
-    return session
+    try:
+        session = _new_session(query, wardrobe)
+        response = finder.ai.generate_stylist_assistant(query)
+        choices = finder.ai.background_helper(query)
+        if not choices or not response:
+            raise ValueError(f"Background helper or response failed: Choices: \n\t\u2022{choices} \ntyping: \n\t\u2022{type(choices)} response: \n\t\u2022{response}")
+        search = None
+        session['chat'] = response
+        if choices['search_listings']:
+            session['search_listings'] = True
+            search = finder.search_listings(choices['description'], choices['size'], choices['max_price'])
+            session['selected_item'] = search[0]
+            
+        suggestion = ''
+        if choices['suggest_outfit'] and search is not None:
+            session['suggest_outfit'] = True
+            suggestion += finder.suggest_outfit(search[0])
+            session['outfit_suggestion'] = suggestion
+        
+        caption = ''    
+        if choices['create_fit_card'] and suggestion:
+            session['create_fit_card'] = True
+            caption = finder.create_fit_card(suggestion, search[0] if search else {})
+            session['fit_card'] = caption
+            
+        if choices['save_favorite']:
+            session['save_favorite'] = True
+            search = finder.save_favorite(suggestion, caption, new_item=search[0] if search else {}, type_=choices['save_favorite'])
+            
+        
+                
+        return session
+    except Exception as ex:
+        print(f"There was an erorr while session process: \n\t\u2022{ex}")
+        session["error"] = str(ex)
+        return session
 
 
 # ── CLI test ──────────────────────────────────────────────────────────────────
 
+def codepath_test():
+        from utils.data_loader import get_example_wardrobe, get_empty_wardrobe
+
+        print("=== Happy path: graphic tee ===\n")
+        session = run_agent(
+            query="looking for a vintage graphic tee under $30",
+            wardrobe=get_example_wardrobe(),
+        )
+        if session["error"]:
+            print(f"Error: {session['error']}")
+        else:
+            print(f"Found: {session['selected_item']['title']}")
+            print(f"\nOutfit: {session['outfit_suggestion']}")
+            print(f"\nFit card: {session['fit_card']}")
+        input("press ENTER to knowledge...")
+        print("\n\n=== No-results path ===\n")
+        session2 = run_agent(
+            query="designer ballgown size XXS under $5",
+            wardrobe=get_empty_wardrobe(),
+        )
+        print(f"Error message: {session2['error']}")
+
+def my_test():
+    
+    
+        print("=== Happy path: graphic tee ===\n")
+        session = run_agent(
+            query="looking for a vintage graphic tee under $30",
+            wardrobe=get_empty_wardrobe(),
+        )
+        if session["error"]:
+            print(f"Error: {session['error']}")
+        else:
+            print(f"Found: {session['selected_item']['title']}")
+            print(f"\nOutfit: {session['outfit_suggestion']}")
+            print(f"\nFit card: {session['fit_card']}")
+            
+        input("\npress ENTER to knowledge...")
+        print("\n\n=== No-results path ===\n")
+        session2 = run_agent(
+            query="designer ballgown size XXS under $5",
+            wardrobe=get_empty_wardrobe(),
+        )
+        print(f"Error message: {session2['error']}")
+
+def main():
+    while True:
+        
+        user = input("Talk to the stylish general: ")
+        if user.lower().strip() in ['q', 'quit', 'break']:
+            print('Leaving session, thanks for chatting with the stylist general')
+            break
+        
+        if not user or not any(char.isalpha() for char in user):
+            continue
+        
+        session = run_agent(
+            query=user,
+            wardrobe=get_empty_wardrobe()['items'],
+        )
+        
+        if session["error"]:
+            print(f"Error: {session['error']}")
+        else:
+            
+            print(f"Fashion general: \n\t\u2022{session['chat']}\n")
+            print(f"Found: {session['selected_item']['title']}")
+            print(f"\nOutfit: {session['outfit_suggestion']}")
+            print(f"\nFit card: {session['fit_card']}")
+            print(f"\nData saved: {session['save_favorite']}")
+            save_chat_history(user=user, 
+                              outfit_suggestion=session['outfit_suggestion'],
+                              caption=session['caption'],
+                              response=session['chat'], 
+                              new_item=session['selected_item'], 
+                              saved=session['save_favorite'])
+        continue
+        
 if __name__ == "__main__":
-    from utils.data_loader import get_example_wardrobe, get_empty_wardrobe
-
-    print("=== Happy path: graphic tee ===\n")
-    session = run_agent(
-        query="looking for a vintage graphic tee under $30",
-        wardrobe=get_example_wardrobe(),
-    )
-    if session["error"]:
-        print(f"Error: {session['error']}")
-    else:
-        print(f"Found: {session['selected_item']['title']}")
-        print(f"\nOutfit: {session['outfit_suggestion']}")
-        print(f"\nFit card: {session['fit_card']}")
-
-    print("\n\n=== No-results path ===\n")
-    session2 = run_agent(
-        query="designer ballgown size XXS under $5",
-        wardrobe=get_example_wardrobe(),
-    )
-    print(f"Error message: {session2['error']}")
+    main()
