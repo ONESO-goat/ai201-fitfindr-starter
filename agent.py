@@ -18,6 +18,7 @@ Usage (once implemented):
     print(result["error"])   # None on success
 """
 
+import traceback
 from tools import FitFinder
 from utils.data_loader import get_empty_wardrobe, save_chat_history
     
@@ -46,6 +47,7 @@ def _new_session(query: str, wardrobe: dict) -> dict:
         "outfit_suggestion": None,   # string returned by suggest_outfit
         "fit_card": None,            # string returned by create_fit_card
         "error": None,               # set if the interaction ended early
+        "save_favorite": False       # If data was saved to favorites
     }
 
 
@@ -66,73 +68,50 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         The session dict after the interaction completes. Check session["error"]
         first — if it is not None, the interaction ended early and the other
         output fields (outfit_suggestion, fit_card) will be None.
-
-    TODO — implement this function using the planning loop you designed in planning.md:
-
-        Step 1: Initialize the session with _new_session().
-
-        Step 2: Parse the user's query to extract a description, size, and
-                max_price. You can use regex, string splitting, or ask the LLM
-                to parse it — document your choice in planning.md.
-                Store the result in session["parsed"].
-
-        Step 3: Call search_listings() with the parsed parameters.
-                Store results in session["search_results"].
-                If no results: set session["error"] to a helpful message and
-                return the session early. Do NOT proceed to suggest_outfit
-                with empty input.
-
-        Step 4: Select the item to use (e.g., the top result).
-                Store it in session["selected_item"].
-
-        Step 5: Call suggest_outfit() with the selected item and wardrobe.
-                Store the result in session["outfit_suggestion"].
-
-        Step 6: Call create_fit_card() with the outfit suggestion and selected item.
-                Store the result in session["fit_card"].
-
-        Step 7: Return the session.
-
-    Before writing code, complete the Planning Loop and State Management sections
-    of planning.md — your implementation should match what you described there.
-    """
-    # TODO: implement the planning loop
-    
+"""
     try:
         session = _new_session(query, wardrobe)
-        response = finder.ai.generate_stylist_assistant(query)
+        response = finder.ai.generate_stylist_assistant(wardrobe=wardrobe, prompt=query)
         choices = finder.ai.background_helper(query)
         if not choices or not response:
             raise ValueError(f"Background helper or response failed: Choices: \n\t\u2022{choices} \ntyping: \n\t\u2022{type(choices)} response: \n\t\u2022{response}")
         search = None
         session['chat'] = response
+        
         if choices['search_listings']:
+            print("SEARCH LISTING...")
             session['search_listings'] = True
             search = finder.search_listings(choices['description'], choices['size'], choices['max_price'])
             session['selected_item'] = search[0]
+            print("SEARCH LISTING COMPLETED")
             
         suggestion = ''
         if choices['suggest_outfit'] and search is not None:
+            print("SUGGESTING OUTFIT...")
             session['suggest_outfit'] = True
-            suggestion += finder.suggest_outfit(search[0])
+            suggestion += finder.suggest_outfit(search[0], wardrobe=wardrobe)
             session['outfit_suggestion'] = suggestion
+            print("SUGGUSTING OUTFIT COMPLETED")
         
         caption = ''    
         if choices['create_fit_card'] and suggestion:
+            print("CREATING CAPTION...")
             session['create_fit_card'] = True
             caption = finder.create_fit_card(suggestion, search[0] if search else {})
             session['fit_card'] = caption
+            print("CAPTION CREATION COMPLETED...")
             
         if choices['save_favorite']:
             session['save_favorite'] = True
             search = finder.save_favorite(suggestion, caption, new_item=search[0] if search else {}, type_=choices['save_favorite'])
-            
+            print("SAVED")
         
                 
         return session
     except Exception as ex:
         print(f"There was an erorr while session process: \n\t\u2022{ex}")
         session["error"] = str(ex)
+        traceback.print_exc()
         return session
 
 
@@ -187,12 +166,14 @@ def main():
     while True:
         
         user = input("Talk to the stylish general: ")
-        if user.lower().strip() in ['q', 'quit', 'break']:
-            print('Leaving session, thanks for chatting with the stylist general')
-            break
+    
         
         if not user or not any(char.isalpha() for char in user):
             continue
+        
+        if user.lower().strip() in ['q', 'quit', 'break']:
+            print('Leaving session, thanks for chatting with the stylist general')
+            break
         
         session = run_agent(
             query=user,
@@ -210,11 +191,16 @@ def main():
             print(f"\nData saved: {session['save_favorite']}")
             save_chat_history(user=user, 
                               outfit_suggestion=session['outfit_suggestion'],
-                              caption=session['caption'],
+                              caption=session['fit_card'],
                               response=session['chat'], 
                               new_item=session['selected_item'], 
                               saved=session['save_favorite'])
         continue
         
 if __name__ == "__main__":
+    test = [
+        "I am looking for a long sleeve shirt that's around $50 dollars",
+        "I'm looking for a vintage graphic tee under $30, size M. I mostly wear baggy jeans and chunky sneakers."
+    
+    ]
     main()

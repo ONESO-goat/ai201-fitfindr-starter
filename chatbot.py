@@ -29,7 +29,7 @@ class Chatbot:
         self.llm_model = llm_model
 
         
-    def generate_stylist_assistant(self, prompt:str='', new_outfit:dict={}):
+    def generate_stylist_assistant(self, wardrobe, prompt:str='', new_outfit:dict={}):
         favs = load_favorites()
         m = f"""
             \u2022The user's Favorite clothing. If there are any items seen, use that knowledge to pick out clothing that'll please the user:
@@ -75,7 +75,7 @@ class Chatbot:
         
             
             The user's warbrobe. If the list/wardrobe is empty, ask questions about the user's taste and recommend clothing based on their speaking style:
-            {load_wardrobe_schema()['empty_wardrobe']['items']}
+            {wardrobe['items']}
             
             The user's favorite clothing and outfits:
             

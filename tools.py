@@ -15,7 +15,7 @@ Tools:
 from dotenv import load_dotenv
 from typing import Union
 from chatbot import Chatbot
-from utils.data_loader import load_listings, load_favorites, load_wardrobe_schema
+from utils.data_loader import load_listings, load_favorites, load_wardrobe_schema, get_empty_wardrobe
 
 load_dotenv()
 
@@ -51,12 +51,13 @@ class FitFinder:
         if not filt:
             filt = [item for item in listed if size in item['size']]
         else:
-            f = []
-            for item in filt:
-                #print(f"ITEM: {item}")
-                if size.lower().strip() in item['size'].lower():
-                    f.append(item)
-            return f
+            if size:
+                f = []
+                for item in filt:
+                    #print(f"ITEM: {item}")
+                    if size.lower().strip() in item['size'].lower():
+                        f.append(item)
+                return f
         return filt
         
 
@@ -119,7 +120,7 @@ class FitFinder:
 
     # ── Tool 2: suggest_outfit ────────────────────────────────────────────────────
 
-    def suggest_outfit(self,new_item: dict, wardrobe: dict={}) -> str:
+    def suggest_outfit(self,new_item: dict, wardrobe: dict) -> str:
         """
         Given a thrifted item and the user's wardrobe, suggest 1–2 complete outfits.
 
@@ -145,7 +146,7 @@ class FitFinder:
         Before writing code, fill in the Tool 2 section of planning.md.
         """
          # this function already does most of the documented task
-        response = self.ai.generate_stylist_assistant(new_outfit=new_item)
+        response = self.ai.generate_stylist_assistant(wardrobe=wardrobe, new_outfit=new_item)
         
         if not response:
             raise ValueError(f"Inside suggest_outfit, the agent's response returned invalid text: {response}")
@@ -195,7 +196,7 @@ class FitFinder:
         \u2022{outfit}
         """
         
-        response = self.ai.generate_stylist_assistant(prompt=t, new_outfit=new_item)
+        response = self.ai.generate_stylist_assistant(wardrobe=get_empty_wardrobe(), prompt=t, new_outfit=new_item)
         if not response:
             raise ValueError(f"Inside create_fit_card, the agent's response returned invalid text: {response}")
         

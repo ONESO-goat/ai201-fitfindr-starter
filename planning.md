@@ -85,7 +85,7 @@ returned data from suggest_outfit:
 ### Tool 3: create_fit_card
 
 **What it does:**
-Creates a final presentation card that summarizes the recommended outfi.
+Creates a final presentation card that summarizes the recommended outfit.
 
 **Input parameters:**
 
@@ -145,35 +145,78 @@ caption: The caption from create_fit_card.
 **What it returns:**
 confirmation if it saved.
 
-
-<!-- Describe what this tool does in 1–2 sentences -->
+**What happens if it fails or returns nothing:**
+Return a warning message indicating that the session
+could not be saved. Continue the conversation without
+interrupting the user experience.
 
 ## Planning Loop
 
 **How does your agent decide which tool to call next?**
 1. Analyze the user's request.
-2. If the user is searching for clothing, call search_listings.
-3. If matching items are found and wardrobe information is available, call suggest_outfit.
-4. Once an outfit recommendation exists, call create_fit_card.
-5. If the user requests saving an item or outfit, call save_favorite.
-6.  The process ends once a fit card or final recommendation has been generated and returned to the user.
+
+2. If the request contains clothing preferences
+(description, size, category, budget),
+call search_listings.
+
+3. Check search results:
+   - If results exist, store them in session state.
+   - If no results exist, stop workflow and
+     suggest broader criteria.
+
+4. If the user selects an item OR the agent
+chooses the highest-ranked result:
+   - Check whether wardrobe data exists.
+   - If wardrobe data exists, call suggest_outfit.
+   - If wardrobe data does not exist, call
+     suggest_outfit with an empty wardrobe.
+
+5. Check outfit recommendation:
+   - If an outfit is generated, store it.
+   - If outfit generation fails, return styling
+     suggestions using only the selected item.
+
+6. Call create_fit_card using the generated outfit.
+
+7. If the user requests saving:
+   - Call save_favorite.
+   - Call save_history.
+
+8. Return the final fit card.
 
 ---
 
 ## State Management
 
 **How does information from one tool get passed to the next?**
-The agent stores session state in memory during the interaction.
+The planning loop stores state in a session dictionary.
 
-Tracked data includes:
+Example:
 
-user search query
-preferred size
-budget
-search results
-selected item
-wardrobe contents
-generated outfit
+session_state =       
+     {
+        "query": ...,              # original user query
+        "chat": ...,                  # Agents message towards the user
+        "parsed": {...},                # extracted description / size / max_price
+        "search_results": [...,]        # list of matching listing dicts
+        "selected_item": ...,       # top result, passed into suggest_outfit
+        "wardrobe": ...,        # user's wardrobe dict
+        "outfit_suggestion": ...,   # string returned by suggest_outfit
+        "fit_card": ...,            # string returned by create_fit_card
+        "error": ...,               # set if the interaction ended early
+        "save_favorite": ...       # If data was saved to favorites
+     }
+The selected_item returned from search_listings is
+saved in session_state and passed directly into
+suggest_outfit.
+
+Chat is the returned response from the agent.
+
+The outfit returned from suggest_outfit is saved in
+session_state and passed directly into create_fit_card.
+
+This allows tools to share information without asking
+the user to re enter it.
 ---
 
 ## Error Handling
@@ -198,7 +241,30 @@ For each tool, describe the specific failure mode you're handling and what the a
      ASCII art, a Mermaid diagram (https://mermaid.js.org/syntax/flowchart.html), or an embedded
      sketch are all fine. You'll share this diagram with an AI tool when asking it to implement
      the planning loop and each individual tool. -->
-A[User Input] --> B[Planning Loop] B --> C[search_listings] C --> D[Search Results] D --> E[suggest_outfit] E --> F[Outfit Recommendation] F --> G[create_fit_card] G --> H[Final Fit Card] H --> I[User Output] D <--> J[Session State] F <--> J C --> K[No Results] K --> I E --> L[Wardrobe Empty] L --> I G --> M[Incomplete Outfit] M --> I
+flowchart TD
+    A[User Input] --> B[Planning Loop]
+
+    B --> C[search_listings]
+    C --> D[Search Results]
+
+    D --> E[suggest_outfit]
+    E --> F[Outfit Recommendation]
+
+    F --> G[create_fit_card]
+    G --> H[Final Fit Card]
+    H --> I[User Output]
+
+    D <--> J[Session State]
+    F <--> J
+
+    C --> K[No Results]
+    K --> I
+
+    E --> L[Wardrobe Empty]
+    L --> I
+
+    G --> M[Incomplete Outfit]
+    M --> I
 ---
 
 ## AI Tool Plan
@@ -228,6 +294,22 @@ Input: Tool specification and outfit recommendation requirements
 Output: Function that combines wardrobe items with a selected listing
 Verification: Test with sample wardrobes and confirm sensible outfit recommendations
 ---
+
+**Milestone 5 — create_fit_card**
+
+AI Tool: Groq
+
+Input:
+- Tool 3 specification
+- new Item
+
+Output:
+- Python function that generates a formatted fit card/social media styled caption
+
+Verification:
+- Test with complete outfits
+- Test with missing accessories
+- Test with incomplete outfit data and verify fallback text summary is returned
 
 ## A Complete Interaction (Step by Step)
 
@@ -280,4 +362,58 @@ Returns a formatted fit card with outfit details and styling notes.
 if save is True, the Agent calls 'save_favorite' which saves the combo with  unique id (uuid or just a normal int)
 
 **Final output to user:**
-<!-- What does the user actually see at the end? -->
+
+Fashion general: 
+        Response from the agent.
+
+Found: Item that was found in search_listing.
+
+Outfit: Outfit created from suggest_outfit.
+
+Fit card: Caption created from create_fit_card.
+
+Data saved: True or False statment if data was saved into favorites.
+
+
+
+EXAMPLE:
+     user: I'm looking for a vintage graphic tee under $30, size M. I mostly wear baggy jeans and chunky sneakers.
+     
+     Fashion general: 
+        •I'm happy to help you find a vintage graphic tee that fits your style and budget. Unfortunately, I couldn't find any vintage graphic tees in our current inventory that match your criteria of being under $30 and size M.
+
+However, I can suggest some alternatives that might interest you. Since you mentioned you like to wear baggy jeans and chunky sneakers, I think a vintage-inspired graphic tee would be a great addition to your wardrobe.
+
+Based on your favorite outfit, the Tie-Dye Long Sleeve — Pastel, I notice that you seem to enjoy unique and eye-catching pieces. I'd like to recommend checking out some other tie-dye or vintage-inspired tops that might pair well with your baggy jeans and chunky sneakers.
+
+In our available clothing, we have the Vintage Levi's 501 Jeans — Medium Wash, which could be a great pairing with a graphic tee. The classic, vintage look of the jeans would provide a nice contrast to a more playful, graphic top.
+
+If you're interested, I can also suggest some other items that might complement your style. For example, we could look for a black or white graphic tee with a fun design that would match your chunky sneakers and baggy jeans.
+
+To better understand your preferences, could you tell me:
+
+* Are you open to considering other styles or colors besides vintage graphic tees?
+* Do you have a specific brand or style in mind for the graphic tee?
+* Would you like me to suggest some other items that might pair well with your baggy jeans and chunky sneakers?
+
+Let me know, and I'll do my best to provide you with some personalized recommendations!
+
+Found: Y2K Baby Tee — Butterfly Print
+
+Outfit: Since you've recently acquired the "Y2K Baby Tee — Butterfly Print" and have the "Tie-Dye Long Sleeve — Pastel" in your wardrobe, I'd love to suggest some outfit combinations that incorporate both pieces.
+
+Considering the whimsical and vintage vibe of both tops, here are a few ideas:
+
+1. **Layered Look**: Wear the "Y2K Baby Tee — Butterfly Print" under the "Tie-Dye Long Sleeve — Pastel" to create a fun, layered look. The butterfly graphic on the baby tee will add a cute touch to the overall outfit.
+2. **Mix-and-Match**: Pair the "Y2K Baby Tee — Butterfly Print" with some neutral-colored bottoms, like the "Vintage Levi's 501 Jeans — Medium Wash" (available in our shop), to create a cute and casual outfit. You could also swap the jeans for a flowy skirt to add a more feminine touch.
+3. **Bohemian Chic**: Combine the "Tie-Dye Long Sleeve — Pastel" with the "Y2K Baby Tee — Butterfly Print" and add some distressed denim or a flowy maxi skirt to create a bohemian-inspired look.
+
+To complement these outfits, you might consider adding some statement accessories, like layered necklaces or a floppy hat, to enhance the overall aesthetic.
+
+If you're interested in adding some new pieces to your wardrobe to further enhance these looks, I can suggest some items from our available clothing. For example, the "Vintage Levi's 501 Jeans — Medium Wash" would be a great pairing with either of the tops.
+
+What do you think of these outfit suggestions? Would you like me to recommend more items or provide styling advice for specific occasions?
+
+Fit card: None
+
+Data saved: False

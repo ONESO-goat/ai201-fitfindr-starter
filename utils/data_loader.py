@@ -118,7 +118,7 @@ def save_chat_history(user,
             history = json.load(file)
         
         h = {
-            "id": len(history['chathistory']) + 1,
+            "id": len(history['chat_history']) + 1,
             "user": user,
             "response": response,
             "new_item": new_item,

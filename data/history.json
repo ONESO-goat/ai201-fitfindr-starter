@@ -1,3 +1,66 @@
 {
-    "chat_history": []
+    "chat_history": [
+        {
+            "id": 1,
+            "user": "\"I am looking for a long sleeve shirt that's around $50 dollars",
+            "response": "I'd be happy to help you find a long sleeve shirt that fits your budget of around $50.\n\nAfter reviewing our available clothing, I couldn't find a long sleeve shirt that exactly matches your budget. However, I did find a few items that might interest you.\n\nSince you liked the Tie-Dye Long Sleeve \u2014 Pastel top, I'm guessing you might have a fondness for unique and eye-catching pieces. With that in mind, I'd like to recommend a few items that could complement your style.\n\nAlthough we don't have a long sleeve shirt that fits your budget, I can suggest pairing the Vintage Levi's 501 Jeans \u2014 Medium Wash with a different top to create a great outfit. The jeans are available for $38, which is close to your budget.\n\nIf you're looking for a long sleeve shirt, I can try to find something that might work for you. Could you please tell me a bit more about what you're looking for in terms of style, color, and brand? For example, do you have a preferred color palette or a specific style in mind, such as streetwear or classic?\n\nAdditionally, would you be open to considering a short sleeve shirt or a different type of top that might fit your budget and style preferences? \n\nLet me know, and I'll do my best to provide more tailored recommendations for you.",
+            "new_item": {
+                "id": "lst_017",
+                "title": "Mesh Long-Sleeve Top \u2014 Black",
+                "description": "Sheer black mesh long-sleeve. Great for layering under a graphic tee or over a bralette. Stretchy material, fits true to size.",
+                "category": "tops",
+                "style_tags": [
+                    "y2k",
+                    "grunge",
+                    "goth",
+                    "layering"
+                ],
+                "size": "S/M",
+                "condition": "excellent",
+                "price": 15.0,
+                "colors": [
+                    "black"
+                ],
+                "brand": null,
+                "platform": "depop",
+                "score": 9.0
+            },
+            "outfit_suggestion": null,
+            "caption": null,
+            "saved": null,
+            "date": "2026-06-13 16:43:17.146833+00:00"
+        },
+        {
+            "id": 2,
+            "user": "I'm looking for a vintage graphic tee under $30, size M. I mostly wear baggy jeans and chunky sneakers.",
+            "response": "I'm happy to help you find a vintage graphic tee that fits your style and budget. Unfortunately, I couldn't find any vintage graphic tees in our current inventory that match your criteria of being under $30 and size M.\n\nHowever, I can suggest some alternatives that might interest you. Since you mentioned you like to wear baggy jeans and chunky sneakers, I think a vintage-inspired graphic tee would be a great addition to your wardrobe.\n\nBased on your favorite outfit, the Tie-Dye Long Sleeve \u2014 Pastel, I notice that you seem to enjoy unique and eye-catching pieces. I'd like to recommend checking out some other tie-dye or vintage-inspired tops that might pair well with your baggy jeans and chunky sneakers.\n\nIn our available clothing, we have the Vintage Levi's 501 Jeans \u2014 Medium Wash, which could be a great pairing with a graphic tee. The classic, vintage look of the jeans would provide a nice contrast to a more playful, graphic top.\n\nIf you're interested, I can also suggest some other items that might complement your style. For example, we could look for a black or white graphic tee with a fun design that would match your chunky sneakers and baggy jeans.\n\nTo better understand your preferences, could you tell me:\n\n* Are you open to considering other styles or colors besides vintage graphic tees?\n* Do you have a specific brand or style in mind for the graphic tee?\n* Would you like me to suggest some other items that might pair well with your baggy jeans and chunky sneakers?\n\nLet me know, and I'll do my best to provide you with some personalized recommendations!",
+            "new_item": {
+                "id": "lst_002",
+                "title": "Y2K Baby Tee \u2014 Butterfly Print",
+                "description": "Super cute early 2000s baby tee with butterfly graphic. Fitted crop length. Tag says medium but fits like a small.",
+                "category": "tops",
+                "style_tags": [
+                    "y2k",
+                    "vintage",
+                    "graphic tee",
+                    "cottagecore"
+                ],
+                "size": "S/M",
+                "condition": "excellent",
+                "price": 18.0,
+                "colors": [
+                    "white",
+                    "pink",
+                    "purple"
+                ],
+                "brand": null,
+                "platform": "depop",
+                "score": 8.5
+            },
+            "outfit_suggestion": "Since you've recently acquired the \"Y2K Baby Tee \u2014 Butterfly Print\" and have the \"Tie-Dye Long Sleeve \u2014 Pastel\" in your wardrobe, I'd love to suggest some outfit combinations that incorporate both pieces.\n\nConsidering the whimsical and vintage vibe of both tops, here are a few ideas:\n\n1. **Layered Look**: Wear the \"Y2K Baby Tee \u2014 Butterfly Print\" under the \"Tie-Dye Long Sleeve \u2014 Pastel\" to create a fun, layered look. The butterfly graphic on the baby tee will add a cute touch to the overall outfit.\n2. **Mix-and-Match**: Pair the \"Y2K Baby Tee \u2014 Butterfly Print\" with some neutral-colored bottoms, like the \"Vintage Levi's 501 Jeans \u2014 Medium Wash\" (available in our shop), to create a cute and casual outfit. You could also swap the jeans for a flowy skirt to add a more feminine touch.\n3. **Bohemian Chic**: Combine the \"Tie-Dye Long Sleeve \u2014 Pastel\" with the \"Y2K Baby Tee \u2014 Butterfly Print\" and add some distressed denim or a flowy maxi skirt to create a bohemian-inspired look.\n\nTo complement these outfits, you might consider adding some statement accessories, like layered necklaces or a floppy hat, to enhance the overall aesthetic.\n\nIf you're interested in adding some new pieces to your wardrobe to further enhance these looks, I can suggest some items from our available clothing. For example, the \"Vintage Levi's 501 Jeans \u2014 Medium Wash\" would be a great pairing with either of the tops.\n\nWhat do you think of these outfit suggestions? Would you like me to recommend more items or provide styling advice for specific occasions?",
+            "caption": null,
+            "saved": false,
+            "date": "2026-06-13 17:06:45.469415+00:00"
+        }
+    ]
 }
