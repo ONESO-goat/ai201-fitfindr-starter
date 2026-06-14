@@ -5,7 +5,7 @@ load_dotenv()
 
 # --- LLM ---
 class Config:
-    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY2")
     LLM_MODEL = "llama-3.3-70b-versatile"
 
 

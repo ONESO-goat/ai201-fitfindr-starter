@@ -187,6 +187,75 @@
                 ],
                 "brand": null,
                 "platform": "depop"
+            },
+            {
+                "id": "lst_002",
+                "title": "Y2K Baby Tee \u2014 Butterfly Print",
+                "description": "Super cute early 2000s baby tee with butterfly graphic. Fitted crop length. Tag says medium but fits like a small.",
+                "category": "tops",
+                "style_tags": [
+                    "y2k",
+                    "vintage",
+                    "graphic tee",
+                    "cottagecore"
+                ],
+                "size": "S/M",
+                "condition": "excellent",
+                "price": 18.0,
+                "colors": [
+                    "white",
+                    "pink",
+                    "purple"
+                ],
+                "brand": null,
+                "platform": "depop",
+                "score": 8.5
+            },
+            {
+                "id": "lst_002",
+                "title": "Y2K Baby Tee \u2014 Butterfly Print",
+                "description": "Super cute early 2000s baby tee with butterfly graphic. Fitted crop length. Tag says medium but fits like a small.",
+                "category": "tops",
+                "style_tags": [
+                    "y2k",
+                    "vintage",
+                    "graphic tee",
+                    "cottagecore"
+                ],
+                "size": "S/M",
+                "condition": "excellent",
+                "price": 18.0,
+                "colors": [
+                    "white",
+                    "pink",
+                    "purple"
+                ],
+                "brand": null,
+                "platform": "depop",
+                "score": 8.5
+            },
+            {
+                "id": "lst_002",
+                "title": "Y2K Baby Tee \u2014 Butterfly Print",
+                "description": "Super cute early 2000s baby tee with butterfly graphic. Fitted crop length. Tag says medium but fits like a small.",
+                "category": "tops",
+                "style_tags": [
+                    "y2k",
+                    "vintage",
+                    "graphic tee",
+                    "cottagecore"
+                ],
+                "size": "S/M",
+                "condition": "excellent",
+                "price": 18.0,
+                "colors": [
+                    "white",
+                    "pink",
+                    "purple"
+                ],
+                "brand": null,
+                "platform": "depop",
+                "score": 8.5
             }
         ]
     }

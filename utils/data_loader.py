@@ -111,7 +111,7 @@ def save_chat_history(user,
                       caption, 
                       outfit_suggestion,
                       new_item=None, 
-                      saved=False):
+                      was_saved=False):
     try:
         path = os.path.join(_DATA_DIR, "history.json")
         with open(path, 'r') as file:
@@ -124,7 +124,7 @@ def save_chat_history(user,
             "new_item": new_item,
             "outfit_suggestion": outfit_suggestion,
             "caption": caption,
-            "saved": saved,
+            "saved": was_saved,
             "date": str(datetime.now(tz=timezone.utc)),
         }
         history['chat_history'].append(h)

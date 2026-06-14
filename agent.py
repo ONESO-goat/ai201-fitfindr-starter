@@ -194,13 +194,15 @@ def main():
                               caption=session['fit_card'],
                               response=session['chat'], 
                               new_item=session['selected_item'], 
-                              saved=session['save_favorite'])
+                              was_saved=session['save_favorite'])
         continue
         
 if __name__ == "__main__":
     test = [
-        "I am looking for a long sleeve shirt that's around $50 dollars",
-        "I'm looking for a vintage graphic tee under $30, size M. I mostly wear baggy jeans and chunky sneakers."
+        "I am looking for a long sleeve shirt that's around $50 dollars, I am going out with some friends so I will be posting this on the media.",
+        
+        "I'm looking for a vintage graphic tee under $30, size M. I mostly wear baggy jeans and chunky sneakers. This will be for an event with family so I hope to remember this moment. Can you create a caption as I will be posting this online, Thanks!"
     
     ]
+    
     main()

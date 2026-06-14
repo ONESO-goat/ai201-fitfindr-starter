@@ -265,11 +265,11 @@ Return EXACTLY this shape. No extra keys. No explanation.
     "search_listings": <true or false>,
     "suggest_outfit": <true or false>,
     "create_fit_card": <true or false>,
-    "save_favorite": <false or "clothing" or "outfit">
+    "save_favorite": <false or "clothing" or "outfits">
 }
 
 ## RULES
-- save_favorite is "outfit" when the user wants a full look (event, occasion, trip)
+- save_favorite is "outfits" when the user wants a full look (event, occasion, trip)
 - save_favorite is "clothing" when the user wants a single piece saved
 - save_favorite is false when the user does not mention saving or liking anything
 - suggest_outfit is true whenever the user mentions styling, outfits, or what to wear with it
@@ -299,7 +299,7 @@ Output:
     "search_listings": true,
     "suggest_outfit": true,
     "create_fit_card": true,
-    "save_favorite": "outfit"
+    "save_favorite": "outfits"
 }
 
 Input: "found this floral dress on Depop, is it a good deal?"
